@@ -20,7 +20,7 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
 });
 
-Route::post('/logout', [AuthenticatedSessionController::class, 'logout'])
+Route::post('/logout', [AuthenticatedSessionController::class, 'destory'])
     ->middleware('auth')
     ->name('logout');
 
