@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { router, Link } from '@inertiajs/react';
 import { Menu } from 'lucide-react';
+import axios from 'axios';
 
 interface LayoutAdminProps {
     user: {
@@ -19,9 +20,27 @@ const LayoutAdmin: React.FC<LayoutAdminProps> = ({
 }) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-    const handleLogout = () => {
-        router.post('/logout');
-    };
+    const handleLogout = async () => {
+    try {
+    const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
+    await axios.get(`${API_BASE}/sanctum/csrf-cookie`, {
+      withCredentials: true,
+    });
+
+    await axios.post(
+      `${API_BASE}/logout`,
+      {},
+      { withCredentials: true }
+    );
+
+    // ✅ PAKAI INERTIA TANPA RELOAD
+    router.visit('/');
+  } catch (error) {
+    console.error('Logout gagal:', error);
+    alert('Logout gagal, silakan refresh halaman.');
+  }
+};
 
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);

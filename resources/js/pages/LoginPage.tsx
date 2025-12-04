@@ -1,6 +1,7 @@
 import React, { useState, FormEvent, ChangeEvent } from 'react';
 import axios, { AxiosError } from 'axios';
 import { User, Lock, Eye, EyeOff } from 'lucide-react';
+import { router } from '@inertiajs/react';
 
 interface LoginFormData {
   name: string;
@@ -31,7 +32,7 @@ const LoginPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ name?: string; password?: string; general?: string }>({});
 
-  const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
+  const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -58,6 +59,10 @@ const LoginPage: React.FC = () => {
     setLoading(true);
 
     try {
+      await axios.get(`${API_BASE}/sanctum/csrf-cookie`, {
+      withCredentials: true,
+    });
+    
       const response = await axios.post<LoginResponse>(
         `${API_BASE}/login`,
         formData,
@@ -76,8 +81,8 @@ const LoginPage: React.FC = () => {
 
         // --- Redirect sesuai role (tombol Back tetap bisa) ---
         const role = data.user?.role?.toLowerCase();
-        if (role === 'admin') window.location.href = '/admin/dashboard';
-        else window.location.href = '/profile';
+        if (role === 'admin') router.visit('/admin/dashboard');
+        else router.visit('/profile');
       }
     } catch (err) {
       const axiosError = err as AxiosError<LoginError>;

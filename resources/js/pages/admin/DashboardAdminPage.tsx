@@ -6,7 +6,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 
 interface PaymentItem {
   id: number;
-  amount: number;         // sesuaikan dengan field di Payment-mu (nominal/total dll)
+  amount: number;
   status: string;
   due_date?: string | null;
   tenant?: {

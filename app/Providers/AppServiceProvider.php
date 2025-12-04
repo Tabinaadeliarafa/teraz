@@ -3,8 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Inertia\Inertia; // ← wajib
-use Illuminate\Support\Facades\Auth; // ← wajib
+use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,7 +22,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Bagikan user ke semua halaman Inertia
+        if (app()->environment('production')) {
+            URL::forceScheme('https');
+        }
+
         Inertia::share([
             'auth.user' => fn () => Auth::user() ? [
                 'id' => Auth::user()->id,
